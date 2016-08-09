@@ -335,7 +335,7 @@ var _class = function (_Base) {
 
               userId = user["id"];
               _context7.next = 14;
-              return _followingHelper(userId, itemId);
+              return this._followingHelper(userId, itemId);
 
             case 14:
               resItemInfo["following"] = _context7.sent;
@@ -375,7 +375,7 @@ var _class = function (_Base) {
             case 26:
               r = _ref6;
               _context7.next = 29;
-              return _followingHelper(userId, itemId);
+              return this._followingHelper(userId, itemId);
 
             case 29:
               r["isFollowing"] = _context7.sent;
