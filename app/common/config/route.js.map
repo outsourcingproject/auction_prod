@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../../src/common/config/route.js"],"names":[],"mappings":";;;AAAA;;;kBAGe,CACb,CAAC,yDAAD,EAA2D,iBAA3D,CADa,C","file":"route.js","sourcesContent":["/**\r\n * Created by zl on 2015/12/8.\r\n */\r\nexport default [\r\n  [/^(home|auc_item|auctioning|info|login|signup|user|todo)/,'home/main/index']\r\n];"]}

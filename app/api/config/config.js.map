@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../../src/api/config/config.js"],"names":[],"mappings":"AAAA;AACA;;;;;kBAGe;AACb;AADa,C","file":"config.js","sourcesContent":["'use strict';\r\n/**\r\n * config\r\n */\r\nexport default {\r\n  //key: value\r\n};"]}

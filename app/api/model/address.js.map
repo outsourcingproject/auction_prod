@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../../src/api/model/address.js"],"names":[],"mappings":";;;;;;;;;;;;;;;;AAAA;;;;;;IAEqB,O;;;;;;;;;;;kBAAA,O","file":"address.js","sourcesContent":["import Base from './base.js'\r\n\r\nexport default class Address extends Base {\r\n}"]}

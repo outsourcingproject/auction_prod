@@ -1,0 +1,12 @@
+{
+    "version": 3,
+    "sources": [
+        "..\\..\\..\\src\\rest\\controller\\message - 副本.js"
+    ],
+    "names": [],
+    "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;AAAA;;;;;;IAEqB,O;;;;;;;;sBAEb,Q;;;;;;;AACJ,iCAAK,aAAL,GAAqB,MAAM,KAAN,CAAY,SAAZ,EAAuB,IAAvB,EAA6B,KAA7B,CAArB;;mCACqB,KAAK,aAAL,CAAmB,KAAnB,E;;;AAArB,iCAAK,O;;AACL,iCAAK,SAAL,GAAiB,KAAjB;;;mCAEiB,KAAK,OAAL,CAAa,MAAb,C;;;AAAb,gC;;;AAEJ,iCAAK,MAAL,GAAc,EAAC,IAAI,KAAK,EAAV,EAAd;;;mCAEa,gBAAM,QAAN,W;;;;;;;;;;;;;;;;;;;;;;;kBAXI,O",
+    "file": "..\\..\\..\\src\\rest\\controller\\message - 副本.js",
+    "sourcesContent": [
+        "import Base from './base';\r\n\r\nexport default class Message extends Base {\r\n\r\n  async __before() {\r\n    this.modelInstance = think.model('message', null, 'api');\r\n    this.modelPk = await this.modelInstance.getPk();\r\n    this.pageCount = false;\r\n\r\n    let user = await this.session('user');\r\n\r\n    this.filter = {to: user.id};\r\n\r\n    return await super.__before();\r\n  }\r\n}"
+    ]
+}
