@@ -328,7 +328,7 @@ var _class = function (_Base) {
             case 9:
               user = _context7.sent;
 
-              if (!(user != null)) {
+              if (think.isEmpty(user)) {
                 _context7.next = 34;
                 break;
               }
@@ -547,30 +547,28 @@ var _class = function (_Base) {
 
             case 2:
               itemInfo = _context9.sent;
-
-              console.log(itemInfo);
               imageIds = JSON.parse(itemInfo["image"]);
-              _context9.next = 7;
+              _context9.next = 6;
               return this.model("bid").where({ "item": id }).count();
 
-            case 7:
+            case 6:
               itemInfo["bidCount"] = _context9.sent;
-              _context9.next = 10;
+              _context9.next = 9;
               return this.model("follow").where({ "item": id }).count();
 
-            case 10:
+            case 9:
               itemInfo["followCount"] = _context9.sent;
 
               itemInfo.beginPrice = +itemInfo.beginPrice;
               itemInfo.currentPrice = +itemInfo.currentPrice;
-              _context9.next = 15;
+              _context9.next = 14;
               return this.model("item").getStage(itemInfo["currentPrice"]);
 
-            case 15:
+            case 14:
               itemInfo["stage"] = _context9.sent;
               return _context9.abrupt('return', itemInfo);
 
-            case 17:
+            case 16:
             case 'end':
               return _context9.stop();
           }
@@ -595,7 +593,7 @@ var _class = function (_Base) {
               return this.model("follow").isFollowing(userId, itemId);
 
             case 2:
-              itemInfo["following"] = _context10.sent;
+              return _context10.abrupt('return', _context10.sent);
 
             case 3:
             case 'end':
