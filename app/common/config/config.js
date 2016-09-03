@@ -20,7 +20,7 @@ exports.default = {
   // 是否处理静态资源请求， porxy_on 开启下可以关闭该配置
   resource_on: true,
   //判断为静态资源请求的正则 排除 api rest 接口和前端的url
-  resource_reg: /^(?!(api|rest|home|auc-item|auctioning|auction-end|article|search|info|login|signup|logout|user|admin|desc|todo))/,
+  resource_reg: /^(?!(api|rest|home|auc-item|auctioning|auction-end|auction-not-start|item-group|article|search|info|login|signup|logout|user|admin|desc|todo))/,
   default_module: "home", //默认模块
   default_controller: "main", //默认的控制器
   default_action: "index" };

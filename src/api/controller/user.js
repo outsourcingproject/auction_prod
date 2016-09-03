@@ -23,9 +23,7 @@ export default class User extends Base {
       totalVolume: await this.userModel.getTotalVolume(user.id),
       totalTurnover: await this.userModel.getTotalTurnover(user.id)
     });
-
     return this.success(userDetail);
-
   }
 
   async signupAction() {
@@ -129,9 +127,9 @@ export default class User extends Base {
     let user = await this.session("user");
     let userId = user["id"];
     let bids = await this.model("bid").getList(userId);
-    for (let b of bids) {
-      b["bidStatus"] = await this.model("bid").getStatus(b["id"]);
-    }
+    // for (let b of bids) {
+    //   b["bidStatus"] = await this.model("bid").getStatus(b["id"]);
+    // }
     return this.success(bids);
   }
 
@@ -145,21 +143,23 @@ export default class User extends Base {
   }
 
   async _getPriceOver(userId) {
-    let items = await this.model("bid").getDistinctList(userId);
+    return await this.model("bid").getPriceOver(userId);
 
-    let myMaxBids = [];
-    let sql = "select * from bid where item = %d and user=%d and value =(select max(value) from bid where item = %d and user=%d)"
-    for (let i of items) {
-      let parsedSql = this.model("bid").parseSql(sql, i["item"], userId, i["item"], userId);
-      myMaxBids.push((await this.model("bid").query(parsedSql))[0]);
-    }
-    console.log(myMaxBids);
-    let resultPriceOver = [];
-    for (let m of myMaxBids) {
-      let r = await this.model("bid").getPriceOver(m["item"], m["value"]);
-      if (!think.isEmpty(r))
-        resultPriceOver.push(r);
-    }
-    return resultPriceOver;
+    // let items = await this.model("bid").getDistinctList(userId);
+
+    // let myMaxBids = [];
+    // let sql = "select * from bid where item = %d and user=%d and value =(select max(value) from bid where item = %d and user=%d)"
+    // for (let i of items) {
+    //   let parsedSql = this.model("bid").parseSql(sql, i["item"], userId, i["item"], userId);
+    //   myMaxBids.push((await this.model("bid").query(parsedSql))[0]);
+    // }
+    // console.log(myMaxBids);
+    // let resultPriceOver = [];
+    // for (let m of myMaxBids) {
+    //   let r = await this.model("bid").getPriceOver(m["item"], m["value"]);
+    //   if (!think.isEmpty(r))
+    //     resultPriceOver.push(r);
+    // }
+    // return resultPriceOver;
   }
 }

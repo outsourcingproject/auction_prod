@@ -206,7 +206,7 @@ global.checkAuction = (0, _asyncToGenerator3.default)(_regenerator2.default.mark
         case 0:
           itemModel = think.model("item", null, "api");
           _context3.next = 3;
-          return itemModel.checkAuction();
+          return itemModel.checkStatus();
 
         case 3:
         case 'end':
@@ -215,5 +215,6 @@ global.checkAuction = (0, _asyncToGenerator3.default)(_regenerator2.default.mark
     }
   }, _callee3, undefined);
 }));
+
 checkAuction().then();
 //# sourceMappingURL=global.js.map

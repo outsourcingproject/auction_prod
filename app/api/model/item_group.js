@@ -49,7 +49,8 @@ var ItemGroup = function (_Base) {
         type: think.model.HAS_MANY,
         key: "id",
         fKey: "group",
-        order: "createAt DESC"
+        order: "createAt DESC",
+        relation: false
       }
     };
   };

@@ -50,7 +50,7 @@ var _class = function (_Base) {
               return this.model("item").checkStatus();
 
             case 2:
-              return _context.abrupt('return', this.success({ result: "result" }));
+              return _context.abrupt('return', this.success());
 
             case 3:
             case 'end':
@@ -65,6 +65,35 @@ var _class = function (_Base) {
     }
 
     return indexAction;
+  }();
+
+  _class.prototype.finishAction = function () {
+    var _ref2 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee2() {
+      var orderId;
+      return _regenerator2.default.wrap(function _callee2$(_context2) {
+        while (1) {
+          switch (_context2.prev = _context2.next) {
+            case 0:
+              orderId = this.param("orderId");
+              _context2.next = 3;
+              return this.model("order").finishOrder(orderId);
+
+            case 3:
+              return _context2.abrupt('return', this.success());
+
+            case 4:
+            case 'end':
+              return _context2.stop();
+          }
+        }
+      }, _callee2, this);
+    }));
+
+    function finishAction() {
+      return _ref2.apply(this, arguments);
+    }
+
+    return finishAction;
   }();
 
   return _class;

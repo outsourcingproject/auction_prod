@@ -50,7 +50,7 @@ var Message = function (_Base) {
             case 3:
               this.modelPk = _context.sent;
 
-              this.pageCount = false;
+              this.needPaging = false;
 
               _context.next = 7;
               return this.session('user');

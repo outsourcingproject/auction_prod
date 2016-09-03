@@ -37,8 +37,15 @@ var User = function (_Base) {
   (0, _inherits3.default)(User, _Base);
 
   function User() {
+    var _temp, _this, _ret;
+
     (0, _classCallCheck3.default)(this, User);
-    return (0, _possibleConstructorReturn3.default)(this, _Base.apply(this, arguments));
+
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    return _ret = (_temp = (_this = (0, _possibleConstructorReturn3.default)(this, _Base.call.apply(_Base, [this].concat(args))), _this), _this.systemUser = 1, _temp), (0, _possibleConstructorReturn3.default)(_this, _ret);
   }
 
   /**

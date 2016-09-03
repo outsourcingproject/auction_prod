@@ -215,34 +215,114 @@ var _class = function (_Base) {
     return auctionedAction;
   }();
 
+  _class.prototype.auctionNotStartAction = function () {
+    var _ref3 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee6() {
+      var _this4 = this;
+
+      var itemModel, items, user;
+      return _regenerator2.default.wrap(function _callee6$(_context6) {
+        while (1) {
+          switch (_context6.prev = _context6.next) {
+            case 0:
+              itemModel = this.model("item");
+              _context6.next = 3;
+              return this.model("item").setRelation(false).where({ status: itemModel.AUCTION_NOT_STARTED }).join("item_type on item.type = item_type.id").field("item.id as id, currentPrice, item.name as name, followCount, auctionEndTime, image, item_type.name as type").limit(10).select();
+
+            case 3:
+              items = _context6.sent;
+              _context6.next = 6;
+              return this.session("user");
+
+            case 6:
+              user = _context6.sent;
+
+              if (think.isEmpty(user)) {
+                _context6.next = 11;
+                break;
+              }
+
+              return _context6.delegateYield(_regenerator2.default.mark(function _callee5() {
+                var followingItems, itemIds;
+                return _regenerator2.default.wrap(function _callee5$(_context5) {
+                  while (1) {
+                    switch (_context5.prev = _context5.next) {
+                      case 0:
+                        _context5.next = 2;
+                        return _this4.model("follow").field("item").where({ user: user["id"] }).select();
+
+                      case 2:
+                        followingItems = _context5.sent;
+                        itemIds = followingItems.map(function (f) {
+                          return f["item"];
+                        });
+
+                        items.map(function (i) {
+                          return itemIds.indexOf(i["id"]) !== -1 ? i["following"] = true : i["following"] = false;
+                        });
+
+                      case 5:
+                      case 'end':
+                        return _context5.stop();
+                    }
+                  }
+                }, _callee5, _this4);
+              })(), 't0', 9);
+
+            case 9:
+              _context6.next = 12;
+              break;
+
+            case 11:
+              items.map(function (i) {
+                return i["following"] = null;
+              });
+
+            case 12:
+              return _context6.abrupt('return', this.success(items));
+
+            case 13:
+            case 'end':
+              return _context6.stop();
+          }
+        }
+      }, _callee6, this);
+    }));
+
+    function auctionNotStartAction() {
+      return _ref3.apply(this, arguments);
+    }
+
+    return auctionNotStartAction;
+  }();
+
   //返回某个拍品的所有竞拍记录
 
 
   _class.prototype.getBidAction = function () {
-    var _ref3 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee5() {
+    var _ref4 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee7() {
       var itemId, res;
-      return _regenerator2.default.wrap(function _callee5$(_context5) {
+      return _regenerator2.default.wrap(function _callee7$(_context7) {
         while (1) {
-          switch (_context5.prev = _context5.next) {
+          switch (_context7.prev = _context7.next) {
             case 0:
               itemId = this.param("id");
-              _context5.next = 3;
+              _context7.next = 3;
               return this.model("bid").getItemBids(itemId);
 
             case 3:
-              res = _context5.sent;
-              return _context5.abrupt('return', this.success(res));
+              res = _context7.sent;
+              return _context7.abrupt('return', this.success(res));
 
             case 5:
             case 'end':
-              return _context5.stop();
+              return _context7.stop();
           }
         }
-      }, _callee5, this);
+      }, _callee7, this);
     }));
 
     function getBidAction() {
-      return _ref3.apply(this, arguments);
+      return _ref4.apply(this, arguments);
     }
 
     return getBidAction;
@@ -253,139 +333,239 @@ var _class = function (_Base) {
 
 
   _class.prototype.bidAction = function () {
-    var _ref4 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee6() {
+    var _ref5 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee8() {
       var user, userId, value, item, res, newPrice, newStage;
-      return _regenerator2.default.wrap(function _callee6$(_context6) {
+      return _regenerator2.default.wrap(function _callee8$(_context8) {
         while (1) {
-          switch (_context6.prev = _context6.next) {
+          switch (_context8.prev = _context8.next) {
             case 0:
-              _context6.next = 2;
+              _context8.next = 2;
               return this.session("user");
 
             case 2:
-              user = _context6.sent;
+              user = _context8.sent;
+
+              if (!think.isEmpty(user)) {
+                _context8.next = 5;
+                break;
+              }
+
+              return _context8.abrupt('return', this.fail());
+
+            case 5:
               userId = user["id"];
               value = this.param("auctionPrice");
               item = this.param("itemId");
-              _context6.next = 8;
-              return this.model("bid").add({ user: userId, item: item, value: value, status: this.model("item").AUCTIONING });
+              _context8.next = 10;
+              return this.model("bid").addOne({ user: userId, item: item, value: value, status: this.model("bid").LEADING });
 
-            case 8:
-              res = _context6.sent;
-
-              //将新的价格数据返回给前端。
-              console.log(res);
-              _context6.next = 12;
+            case 10:
+              res = _context8.sent;
+              _context8.next = 13;
               return this.model("item").setRelation(false).where({ id: item }).field("currentPrice").find();
 
-            case 12:
-              newPrice = _context6.sent;
-              _context6.next = 15;
+            case 13:
+              newPrice = _context8.sent;
+              _context8.next = 16;
               return this.model("item").getStage(newPrice["currentPrice"]);
 
-            case 15:
-              newStage = _context6.sent;
-              return _context6.abrupt('return', this.success({ id: res, newPrice: newPrice["currentPrice"], newStage: newStage }));
+            case 16:
+              newStage = _context8.sent;
+              return _context8.abrupt('return', this.success({ id: res, newPrice: newPrice["currentPrice"], newStage: newStage }));
 
-            case 17:
+            case 18:
             case 'end':
-              return _context6.stop();
+              return _context8.stop();
           }
         }
-      }, _callee6, this);
+      }, _callee8, this);
     }));
 
     function bidAction() {
-      return _ref4.apply(this, arguments);
+      return _ref5.apply(this, arguments);
     }
 
     return bidAction;
   }();
 
-  _class.prototype.detailAction = function () {
-    var _ref5 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee7() {
-      var itemId, resItemInfo, resRelatedItems, user, userId, _iterator, _isArray, _i, _ref6, r, _iterator2, _isArray2, _i2, _ref7, _r;
-
-      return _regenerator2.default.wrap(function _callee7$(_context7) {
+  _class.prototype.followAction = function () {
+    var _ref6 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee9() {
+      var user, userId, itemId, state;
+      return _regenerator2.default.wrap(function _callee9$(_context9) {
         while (1) {
-          switch (_context7.prev = _context7.next) {
+          switch (_context9.prev = _context9.next) {
+            case 0:
+              _context9.next = 2;
+              return this.session("user");
+
+            case 2:
+              user = _context9.sent;
+
+              if (!think.isEmpty(user)) {
+                _context9.next = 5;
+                break;
+              }
+
+              return _context9.abrupt('return', this.fail());
+
+            case 5:
+              userId = user.id;
+              itemId = this.param("itemId");
+              state = this.param("state");
+
+              if (!state) {
+                _context9.next = 16;
+                break;
+              }
+
+              _context9.t0 = this;
+              _context9.next = 12;
+              return this.model("follow").add({ user: userId, item: itemId });
+
+            case 12:
+              _context9.t1 = _context9.sent;
+              return _context9.abrupt('return', _context9.t0.success.call(_context9.t0, _context9.t1));
+
+            case 16:
+              _context9.t2 = this;
+              _context9.next = 19;
+              return this.model("follow").where({ user: userId, item: itemId }).delete();
+
+            case 19:
+              _context9.t3 = _context9.sent;
+              return _context9.abrupt('return', _context9.t2.success.call(_context9.t2, _context9.t3));
+
+            case 21:
+            case 'end':
+              return _context9.stop();
+          }
+        }
+      }, _callee9, this);
+    }));
+
+    function followAction() {
+      return _ref6.apply(this, arguments);
+    }
+
+    return followAction;
+  }();
+
+  _class.prototype.groupAction = function () {
+    var _ref7 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee10() {
+      var groupId, data;
+      return _regenerator2.default.wrap(function _callee10$(_context10) {
+        while (1) {
+          switch (_context10.prev = _context10.next) {
+            case 0:
+              groupId = this.param("id");
+
+              console.log(groupId);
+              _context10.next = 4;
+              return this.model("item_group").selectData(groupId);
+
+            case 4:
+              data = _context10.sent;
+              return _context10.abrupt('return', this.success(data));
+
+            case 6:
+            case 'end':
+              return _context10.stop();
+          }
+        }
+      }, _callee10, this);
+    }));
+
+    function groupAction() {
+      return _ref7.apply(this, arguments);
+    }
+
+    return groupAction;
+  }();
+
+  _class.prototype.detailAction = function () {
+    var _ref8 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee11() {
+      var itemId, resItemInfo, resRelatedItems, user, userId, _iterator, _isArray, _i, _ref9, r, _iterator2, _isArray2, _i2, _ref10, _r;
+
+      return _regenerator2.default.wrap(function _callee11$(_context11) {
+        while (1) {
+          switch (_context11.prev = _context11.next) {
             case 0:
               itemId = this.param("id"); //获取item id;
 
-              _context7.next = 3;
+              _context11.next = 3;
               return this._detailHelper(itemId);
 
             case 3:
-              resItemInfo = _context7.sent;
-              _context7.next = 6;
+              resItemInfo = _context11.sent;
+              _context11.next = 6;
               return this._relatedItemHelper(itemId);
 
             case 6:
-              resRelatedItems = _context7.sent;
-              _context7.next = 9;
+              resRelatedItems = _context11.sent;
+              _context11.next = 9;
               return this.session("user");
 
             case 9:
-              user = _context7.sent;
+              user = _context11.sent;
 
               if (think.isEmpty(user)) {
-                _context7.next = 34;
+                _context11.next = 34;
                 break;
               }
 
               userId = user["id"];
-              _context7.next = 14;
+              _context11.next = 14;
               return this._followingHelper(userId, itemId);
 
             case 14:
-              resItemInfo["following"] = _context7.sent;
+              resItemInfo["following"] = _context11.sent;
               _iterator = resRelatedItems, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : (0, _getIterator3.default)(_iterator);
 
             case 16:
               if (!_isArray) {
-                _context7.next = 22;
+                _context11.next = 22;
                 break;
               }
 
               if (!(_i >= _iterator.length)) {
-                _context7.next = 19;
+                _context11.next = 19;
                 break;
               }
 
-              return _context7.abrupt('break', 32);
+              return _context11.abrupt('break', 32);
 
             case 19:
-              _ref6 = _iterator[_i++];
-              _context7.next = 26;
+              _ref9 = _iterator[_i++];
+              _context11.next = 26;
               break;
 
             case 22:
               _i = _iterator.next();
 
               if (!_i.done) {
-                _context7.next = 25;
+                _context11.next = 25;
                 break;
               }
 
-              return _context7.abrupt('break', 32);
+              return _context11.abrupt('break', 32);
 
             case 25:
-              _ref6 = _i.value;
+              _ref9 = _i.value;
 
             case 26:
-              r = _ref6;
-              _context7.next = 29;
-              return this._followingHelper(userId, itemId);
+              r = _ref9;
+              _context11.next = 29;
+              return this._followingHelper(userId, r["id"]);
 
             case 29:
-              r["isFollowing"] = _context7.sent;
+              r["following"] = _context11.sent;
 
             case 30:
-              _context7.next = 16;
+              _context11.next = 16;
               break;
 
             case 32:
-              _context7.next = 50;
+              _context11.next = 50;
               break;
 
             case 34:
@@ -394,217 +574,217 @@ var _class = function (_Base) {
 
             case 36:
               if (!_isArray2) {
-                _context7.next = 42;
+                _context11.next = 42;
                 break;
               }
 
               if (!(_i2 >= _iterator2.length)) {
-                _context7.next = 39;
+                _context11.next = 39;
                 break;
               }
 
-              return _context7.abrupt('break', 50);
+              return _context11.abrupt('break', 50);
 
             case 39:
-              _ref7 = _iterator2[_i2++];
-              _context7.next = 46;
+              _ref10 = _iterator2[_i2++];
+              _context11.next = 46;
               break;
 
             case 42:
               _i2 = _iterator2.next();
 
               if (!_i2.done) {
-                _context7.next = 45;
+                _context11.next = 45;
                 break;
               }
 
-              return _context7.abrupt('break', 50);
+              return _context11.abrupt('break', 50);
 
             case 45:
-              _ref7 = _i2.value;
+              _ref10 = _i2.value;
 
             case 46:
-              _r = _ref7;
+              _r = _ref10;
 
-              _r["isFollowing"] = null;
+              _r["following"] = null;
 
             case 48:
-              _context7.next = 36;
+              _context11.next = 36;
               break;
 
             case 50:
               resItemInfo["relatedItems"] = resRelatedItems;
-              return _context7.abrupt('return', this.success(resItemInfo));
+              return _context11.abrupt('return', this.success(resItemInfo));
 
             case 52:
             case 'end':
-              return _context7.stop();
+              return _context11.stop();
           }
         }
-      }, _callee7, this);
+      }, _callee11, this);
     }));
 
     function detailAction() {
-      return _ref5.apply(this, arguments);
+      return _ref8.apply(this, arguments);
     }
 
     return detailAction;
   }();
 
   _class.prototype._relatedItemHelper = function () {
-    var _ref8 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee8(id, userId) {
-      var itemInfo, relatedItems, res, _iterator3, _isArray3, _i3, _ref9, r, rDetail;
+    var _ref11 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee12(id, userId) {
+      var itemInfo, relatedItems, res, _iterator3, _isArray3, _i3, _ref12, r, rDetail;
 
-      return _regenerator2.default.wrap(function _callee8$(_context8) {
+      return _regenerator2.default.wrap(function _callee12$(_context12) {
         while (1) {
-          switch (_context8.prev = _context8.next) {
+          switch (_context12.prev = _context12.next) {
             case 0:
-              _context8.next = 2;
+              _context12.next = 2;
               return this.itemModel.setRelation(false).where({ "id": id }).find();
 
             case 2:
-              itemInfo = _context8.sent;
-              _context8.next = 5;
-              return this.itemModel.setRelation(false).where({ "group": itemInfo["group"] }).field("id").select();
+              itemInfo = _context12.sent;
+              _context12.next = 5;
+              return this.itemModel.setRelation(false).where({ "group": itemInfo["group"] }).field("id").limit(10).select();
 
             case 5:
-              relatedItems = _context8.sent;
+              relatedItems = _context12.sent;
               res = [];
               _iterator3 = relatedItems, _isArray3 = Array.isArray(_iterator3), _i3 = 0, _iterator3 = _isArray3 ? _iterator3 : (0, _getIterator3.default)(_iterator3);
 
             case 8:
               if (!_isArray3) {
-                _context8.next = 14;
+                _context12.next = 14;
                 break;
               }
 
               if (!(_i3 >= _iterator3.length)) {
-                _context8.next = 11;
+                _context12.next = 11;
                 break;
               }
 
-              return _context8.abrupt('break', 25);
+              return _context12.abrupt('break', 25);
 
             case 11:
-              _ref9 = _iterator3[_i3++];
-              _context8.next = 18;
+              _ref12 = _iterator3[_i3++];
+              _context12.next = 18;
               break;
 
             case 14:
               _i3 = _iterator3.next();
 
               if (!_i3.done) {
-                _context8.next = 17;
+                _context12.next = 17;
                 break;
               }
 
-              return _context8.abrupt('break', 25);
+              return _context12.abrupt('break', 25);
 
             case 17:
-              _ref9 = _i3.value;
+              _ref12 = _i3.value;
 
             case 18:
-              r = _ref9;
-              _context8.next = 21;
+              r = _ref12;
+              _context12.next = 21;
               return this._detailHelper(r["id"], userId);
 
             case 21:
-              rDetail = _context8.sent;
+              rDetail = _context12.sent;
 
               res.push(rDetail);
 
             case 23:
-              _context8.next = 8;
+              _context12.next = 8;
               break;
 
             case 25:
-              return _context8.abrupt('return', res);
+              return _context12.abrupt('return', res);
 
             case 26:
             case 'end':
-              return _context8.stop();
+              return _context12.stop();
           }
         }
-      }, _callee8, this);
+      }, _callee12, this);
     }));
 
     function _relatedItemHelper(_x, _x2) {
-      return _ref8.apply(this, arguments);
+      return _ref11.apply(this, arguments);
     }
 
     return _relatedItemHelper;
   }();
 
   _class.prototype._detailHelper = function () {
-    var _ref10 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee9(id) {
+    var _ref13 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee13(id) {
       var itemInfo, imageIds;
-      return _regenerator2.default.wrap(function _callee9$(_context9) {
+      return _regenerator2.default.wrap(function _callee13$(_context13) {
         while (1) {
-          switch (_context9.prev = _context9.next) {
+          switch (_context13.prev = _context13.next) {
             case 0:
-              _context9.next = 2;
+              _context13.next = 2;
               return this.itemModel.setRelation(false).where({ "id": id }).find();
 
             case 2:
-              itemInfo = _context9.sent;
+              itemInfo = _context13.sent;
               imageIds = JSON.parse(itemInfo["image"]);
-              _context9.next = 6;
+              _context13.next = 6;
               return this.model("bid").where({ "item": id }).count();
 
             case 6:
-              itemInfo["bidCount"] = _context9.sent;
-              _context9.next = 9;
+              itemInfo["bidCount"] = _context13.sent;
+              _context13.next = 9;
               return this.model("follow").where({ "item": id }).count();
 
             case 9:
-              itemInfo["followCount"] = _context9.sent;
+              itemInfo["followCount"] = _context13.sent;
 
               itemInfo.beginPrice = +itemInfo.beginPrice;
               itemInfo.currentPrice = +itemInfo.currentPrice;
-              _context9.next = 14;
+              _context13.next = 14;
               return this.model("item").getStage(itemInfo["currentPrice"]);
 
             case 14:
-              itemInfo["stage"] = _context9.sent;
-              return _context9.abrupt('return', itemInfo);
+              itemInfo["stage"] = _context13.sent;
+              return _context13.abrupt('return', itemInfo);
 
             case 16:
             case 'end':
-              return _context9.stop();
+              return _context13.stop();
           }
         }
-      }, _callee9, this);
+      }, _callee13, this);
     }));
 
     function _detailHelper(_x3) {
-      return _ref10.apply(this, arguments);
+      return _ref13.apply(this, arguments);
     }
 
     return _detailHelper;
   }();
 
   _class.prototype._followingHelper = function () {
-    var _ref11 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee10(userId, itemId) {
-      return _regenerator2.default.wrap(function _callee10$(_context10) {
+    var _ref14 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee14(userId, itemId) {
+      return _regenerator2.default.wrap(function _callee14$(_context14) {
         while (1) {
-          switch (_context10.prev = _context10.next) {
+          switch (_context14.prev = _context14.next) {
             case 0:
-              _context10.next = 2;
+              _context14.next = 2;
               return this.model("follow").isFollowing(userId, itemId);
 
             case 2:
-              return _context10.abrupt('return', _context10.sent);
+              return _context14.abrupt('return', _context14.sent);
 
             case 3:
             case 'end':
-              return _context10.stop();
+              return _context14.stop();
           }
         }
-      }, _callee10, this);
+      }, _callee14, this);
     }));
 
     function _followingHelper(_x4, _x5) {
-      return _ref11.apply(this, arguments);
+      return _ref14.apply(this, arguments);
     }
 
     return _followingHelper;

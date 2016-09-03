@@ -115,175 +115,199 @@ var Item = function (_Base) {
 
   Item.prototype.checkStatus = function () {
     var _ref2 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee2() {
-      var currentTime, bidModel, orderModel, itemModel, items_end, _iterator, _isArray, _i, _ref3, i, boolBid, items_auctioning, _iterator2, _isArray2, _i2, _ref4, _i3;
+      var _this2 = this;
 
-      return _regenerator2.default.wrap(function _callee2$(_context2) {
+      var currentTime, bidModel, orderModel, itemModel, messageModel, userModel, items_end, _loop, _iterator, _isArray, _i, _ref3, _ret2, items_auctioning, _iterator2, _isArray2, _i2, _ref4, _i3;
+
+      return _regenerator2.default.wrap(function _callee2$(_context3) {
         while (1) {
-          switch (_context2.prev = _context2.next) {
+          switch (_context3.prev = _context3.next) {
             case 0:
               currentTime = new Date().getTime();
               bidModel = think.model("bid", null, "api");
               orderModel = think.model("order", null, "api");
               itemModel = think.model("item", null, "api");
-
-
-              console.log("========================");
-              _context2.next = 7;
+              messageModel = think.model("message", null, "api");
+              userModel = think.model("user", null, "api");
+              _context3.next = 8;
               return this.where({
                 auctionEndTime: { "<": currentTime },
                 status: ["NOTIN", [this.AUCTION_FAILED, this.AUCTION_ENDED]]
               }).select();
 
-            case 7:
-              items_end = _context2.sent;
+            case 8:
+              items_end = _context3.sent;
+              _loop = _regenerator2.default.mark(function _loop() {
+                var i, boolBid, userIds, messages;
+                return _regenerator2.default.wrap(function _loop$(_context2) {
+                  while (1) {
+                    switch (_context2.prev = _context2.next) {
+                      case 0:
+                        if (!_isArray) {
+                          _context2.next = 6;
+                          break;
+                        }
+
+                        if (!(_i >= _iterator.length)) {
+                          _context2.next = 3;
+                          break;
+                        }
+
+                        return _context2.abrupt("return", "break");
+
+                      case 3:
+                        _ref3 = _iterator[_i++];
+                        _context2.next = 10;
+                        break;
+
+                      case 6:
+                        _i = _iterator.next();
+
+                        if (!_i.done) {
+                          _context2.next = 9;
+                          break;
+                        }
+
+                        return _context2.abrupt("return", "break");
+
+                      case 9:
+                        _ref3 = _i.value;
+
+                      case 10:
+                        i = _ref3;
+                        _context2.next = 13;
+                        return bidModel.where({ item: i["id"] }).count();
+
+                      case 13:
+                        boolBid = _context2.sent;
+
+                        if (!(boolBid == 0 || think.isEmpty(i["currentBidder"]))) {
+                          _context2.next = 19;
+                          break;
+                        }
+
+                        _context2.next = 17;
+                        return _this2.where({ id: i["id"] }).update({ status: _this2.AUCTION_FAILED });
+
+                      case 17:
+                        _context2.next = 33;
+                        break;
+
+                      case 19:
+                        _context2.next = 21;
+                        return _this2.where({ id: i["id"] }).update({ status: _this2.AUCTION_ENDED });
+
+                      case 21:
+                        _context2.next = 23;
+                        return orderModel.addOne(i["currentBidder"], i["id"]);
+
+                      case 23:
+                        _context2.next = 25;
+                        return bidModel.where({ item: i["id"], value: i["currentPrice"] }).update({ status: bidModel.WINNING });
+
+                      case 25:
+                        _context2.next = 27;
+                        return bidModel.where({ item: i["id"], value: ["!=", i["currentPrice"]] }).update({ status: bidModel.FAILING });
+
+                      case 27:
+                        _context2.next = 29;
+                        return messageModel.sendSystemMessage([{ from: userModel.systemUser, to: i["currentBidder"], title: "系统消息", content: "您的商品" + i["name"] + bidModel.STATUS[0], read: 0 }]);
+
+                      case 29:
+                        userIds = bidModel.where({ item: i["id"], status: bidModel.FAILING, user: { "!=": i["currentBidder"] } }).distinct("id").select();
+                        messages = userIds.map(function (u) {
+                          return { from: userModel.systemUser, to: u.user, title: "系统消息", content: "您的商品" + i["name"] + bidModel.STATUS[1], read: 0 };
+                        });
+                        _context2.next = 33;
+                        return messageModel.sendSystemMessage(messages);
+
+                      case 33:
+                      case "end":
+                        return _context2.stop();
+                    }
+                  }
+                }, _loop, _this2);
+              });
               _iterator = items_end, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : (0, _getIterator3.default)(_iterator);
 
-            case 9:
-              if (!_isArray) {
-                _context2.next = 15;
-                break;
-              }
-
-              if (!(_i >= _iterator.length)) {
-                _context2.next = 12;
-                break;
-              }
-
-              return _context2.abrupt("break", 45);
+            case 11:
+              return _context3.delegateYield(_loop(), "t0", 12);
 
             case 12:
-              _ref3 = _iterator[_i++];
-              _context2.next = 19;
-              break;
+              _ret2 = _context3.t0;
+
+              if (!(_ret2 === "break")) {
+                _context3.next = 15;
+                break;
+              }
+
+              return _context3.abrupt("break", 17);
 
             case 15:
-              _i = _iterator.next();
-
-              if (!_i.done) {
-                _context2.next = 18;
-                break;
-              }
-
-              return _context2.abrupt("break", 45);
-
-            case 18:
-              _ref3 = _i.value;
-
-            case 19:
-              i = _ref3;
-              _context2.next = 22;
-              return bidModel.where({ item: i["id"] }).count();
-
-            case 22:
-              boolBid = _context2.sent;
-
-              if (!(boolBid == 0)) {
-                _context2.next = 28;
-                break;
-              }
-
-              _context2.next = 26;
-              return this.where({ id: i["id"] }).update({ status: this.AUCTION_FAILED });
-
-            case 26:
-              _context2.next = 43;
+              _context3.next = 11;
               break;
 
-            case 28:
-              _context2.prev = 28;
-              _context2.next = 31;
-              return this.startTrans();
-
-            case 31:
-              _context2.next = 33;
-              return orderModel.addOne(i["currentBidder"], i["id"]);
-
-            case 33:
-              _context2.next = 35;
-              return this.where({ id: i["id"] }).update({ status: this.AUCTION_ENDED });
-
-            case 35:
-              _context2.next = 37;
-              return this.commit();
-
-            case 37:
-              _context2.next = 43;
-              break;
-
-            case 39:
-              _context2.prev = 39;
-              _context2.t0 = _context2["catch"](28);
-              _context2.next = 43;
-              return this.rollback();
-
-            case 43:
-              _context2.next = 9;
-              break;
-
-            case 45:
-
-              console.log("========================");
-
-              _context2.next = 48;
+            case 17:
+              _context3.next = 19;
               return itemModel.where({
                 auctionBeginTime: { "<": currentTime },
                 auctionEndTime: { ">": currentTime },
                 status: ["NOTIN", [this.AUCTIONING]]
               }).select();
 
-            case 48:
-              items_auctioning = _context2.sent;
+            case 19:
+              items_auctioning = _context3.sent;
               _iterator2 = items_auctioning, _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : (0, _getIterator3.default)(_iterator2);
 
-            case 50:
+            case 21:
               if (!_isArray2) {
-                _context2.next = 56;
+                _context3.next = 27;
                 break;
               }
 
               if (!(_i2 >= _iterator2.length)) {
-                _context2.next = 53;
+                _context3.next = 24;
                 break;
               }
 
-              return _context2.abrupt("break", 65);
+              return _context3.abrupt("break", 36);
 
-            case 53:
+            case 24:
               _ref4 = _iterator2[_i2++];
-              _context2.next = 60;
+              _context3.next = 31;
               break;
 
-            case 56:
+            case 27:
               _i2 = _iterator2.next();
 
               if (!_i2.done) {
-                _context2.next = 59;
+                _context3.next = 30;
                 break;
               }
 
-              return _context2.abrupt("break", 65);
+              return _context3.abrupt("break", 36);
 
-            case 59:
+            case 30:
               _ref4 = _i2.value;
 
-            case 60:
+            case 31:
               _i3 = _ref4;
-              _context2.next = 63;
+              _context3.next = 34;
               return itemModel.where({ id: _i3["id"] }).update({ status: this.AUCTIONING });
 
-            case 63:
-              _context2.next = 50;
+            case 34:
+              _context3.next = 21;
               break;
 
-            case 65:
-              return _context2.abrupt("return", true);
+            case 36:
+              return _context3.abrupt("return", true);
 
-            case 66:
+            case 37:
             case "end":
-              return _context2.stop();
+              return _context3.stop();
           }
         }
-      }, _callee2, this, [[28, 39]]);
+      }, _callee2, this);
     }));
 
     function checkStatus() {
@@ -291,26 +315,6 @@ var Item = function (_Base) {
     }
 
     return checkStatus;
-  }();
-
-  Item.prototype.autoProcessItem = function () {
-    var _ref5 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee3() {
-      return _regenerator2.default.wrap(function _callee3$(_context3) {
-        while (1) {
-          switch (_context3.prev = _context3.next) {
-            case 0:
-            case "end":
-              return _context3.stop();
-          }
-        }
-      }, _callee3, this);
-    }));
-
-    function autoProcessItem() {
-      return _ref5.apply(this, arguments);
-    }
-
-    return autoProcessItem;
   }();
 
   Item.prototype.getListAdmin = function getListAdmin() {

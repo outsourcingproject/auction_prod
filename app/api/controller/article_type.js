@@ -107,11 +107,11 @@ var _class = function (_Base) {
               result = {
                 "lefttab": {
                   "tabs": [articles[0]["name"]],
-                  "details": [articles[0]["article"].slice(0, 6)]
+                  "details": [articles[0]["article"]]
                 },
                 "righttab": {
                   "tabs": [articles[1]["name"], articles[2]["name"], articles[3]["name"]],
-                  "details": [articles[1]["article"].slice(0, 6), articles[2]["article"].slice(0, 6), articles[3]["article"].slice(0, 6)]
+                  "details": [articles[1]["article"], articles[2]["article"], articles[3]["article"]]
                 }
               };
               return _context.abrupt('return', this.success(result));

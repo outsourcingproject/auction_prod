@@ -50,13 +50,14 @@ var ItemGroup = function (_Base) {
               this.modelPk = _context.sent;
 
               this.needPaging = false;
-              _context.next = 7;
+              this.listOrder = { 'createAt': 'desc' };
+              _context.next = 8;
               return _Base.prototype.__before.call(this);
 
-            case 7:
+            case 8:
               return _context.abrupt('return', _context.sent);
 
-            case 8:
+            case 9:
             case 'end':
               return _context.stop();
           }

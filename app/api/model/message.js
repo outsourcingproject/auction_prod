@@ -29,7 +29,14 @@ var Message = function (_Base) {
 	}
 
 	Message.prototype.getList = function getList(userId) {
-		return this.where({ "to": userId }).field("title,createAt,id").select();
+		return this.where({ to: userId, read: 0 }).order({ createAt: "DESC" }).limit(10).select();
+	};
+
+	//messages: an array of message object
+
+
+	Message.prototype.sendSystemMessage = function sendSystemMessage(messages) {
+		return this.addMany(messages);
 	};
 
 	return Message;

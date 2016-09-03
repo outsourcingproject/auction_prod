@@ -52,7 +52,7 @@ var Order = function (_Base) {
               this.needPaging = false;
               this.listOrder = { 'order.createAt': 'desc' };
               this.join = ["user on user.id=order.user", "item on item.id=order.item"];
-              this.field = "order.id,order.address,order.status,order.createAt,order.updateAt,order.price,user.id as uid,user.username,item.name,item.id as iid";
+              this.field = "order.id,order.address,order.status,order.createAt,order.updateAt,order.price,user.id as uid,user.username,item.name,item.id as iid,item.tag as tag,expressNo,expressName";
               _context.next = 10;
               return _Base.prototype.__before.call(this);
 

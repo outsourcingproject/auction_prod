@@ -2,10 +2,6 @@
 
 exports.__esModule = true;
 
-var _getIterator2 = require('babel-runtime/core-js/get-iterator');
-
-var _getIterator3 = _interopRequireDefault(_getIterator2);
-
 var _regenerator = require('babel-runtime/regenerator');
 
 var _regenerator2 = _interopRequireDefault(_regenerator);
@@ -432,8 +428,7 @@ var User = function (_Base) {
 
   User.prototype.bidAction = function () {
     var _ref9 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee9() {
-      var user, userId, bids, _iterator, _isArray, _i, _ref10, b;
-
+      var user, userId, bids;
       return _regenerator2.default.wrap(function _callee9$(_context9) {
         while (1) {
           switch (_context9.prev = _context9.next) {
@@ -449,55 +444,9 @@ var User = function (_Base) {
 
             case 6:
               bids = _context9.sent;
-              _iterator = bids, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : (0, _getIterator3.default)(_iterator);
-
-            case 8:
-              if (!_isArray) {
-                _context9.next = 14;
-                break;
-              }
-
-              if (!(_i >= _iterator.length)) {
-                _context9.next = 11;
-                break;
-              }
-
-              return _context9.abrupt('break', 24);
-
-            case 11:
-              _ref10 = _iterator[_i++];
-              _context9.next = 18;
-              break;
-
-            case 14:
-              _i = _iterator.next();
-
-              if (!_i.done) {
-                _context9.next = 17;
-                break;
-              }
-
-              return _context9.abrupt('break', 24);
-
-            case 17:
-              _ref10 = _i.value;
-
-            case 18:
-              b = _ref10;
-              _context9.next = 21;
-              return this.model("bid").getStatus(b["id"]);
-
-            case 21:
-              b["bidStatus"] = _context9.sent;
-
-            case 22:
-              _context9.next = 8;
-              break;
-
-            case 24:
               return _context9.abrupt('return', this.success(bids));
 
-            case 25:
+            case 8:
             case 'end':
               return _context9.stop();
           }
@@ -516,7 +465,7 @@ var User = function (_Base) {
 
 
   User.prototype.followAction = function () {
-    var _ref11 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee10() {
+    var _ref10 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee10() {
       var user, userId, followings;
       return _regenerator2.default.wrap(function _callee10$(_context10) {
         while (1) {
@@ -546,130 +495,25 @@ var User = function (_Base) {
     }));
 
     function followAction() {
-      return _ref11.apply(this, arguments);
+      return _ref10.apply(this, arguments);
     }
 
     return followAction;
   }();
 
   User.prototype._getPriceOver = function () {
-    var _ref12 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee11(userId) {
-      var items, myMaxBids, sql, _iterator2, _isArray2, _i2, _ref13, i, parsedSql, resultPriceOver, _iterator3, _isArray3, _i3, _ref14, m, r;
-
+    var _ref11 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee11(userId) {
       return _regenerator2.default.wrap(function _callee11$(_context11) {
         while (1) {
           switch (_context11.prev = _context11.next) {
             case 0:
               _context11.next = 2;
-              return this.model("bid").getDistinctList(userId);
+              return this.model("bid").getPriceOver(userId);
 
             case 2:
-              items = _context11.sent;
-              myMaxBids = [];
-              sql = "select * from bid where item = %d and user=%d and value =(select max(value) from bid where item = %d and user=%d)";
-              _iterator2 = items, _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : (0, _getIterator3.default)(_iterator2);
+              return _context11.abrupt('return', _context11.sent);
 
-            case 6:
-              if (!_isArray2) {
-                _context11.next = 12;
-                break;
-              }
-
-              if (!(_i2 >= _iterator2.length)) {
-                _context11.next = 9;
-                break;
-              }
-
-              return _context11.abrupt('break', 25);
-
-            case 9:
-              _ref13 = _iterator2[_i2++];
-              _context11.next = 16;
-              break;
-
-            case 12:
-              _i2 = _iterator2.next();
-
-              if (!_i2.done) {
-                _context11.next = 15;
-                break;
-              }
-
-              return _context11.abrupt('break', 25);
-
-            case 15:
-              _ref13 = _i2.value;
-
-            case 16:
-              i = _ref13;
-              parsedSql = this.model("bid").parseSql(sql, i["item"], userId, i["item"], userId);
-              _context11.t0 = myMaxBids;
-              _context11.next = 21;
-              return this.model("bid").query(parsedSql);
-
-            case 21:
-              _context11.t1 = _context11.sent[0];
-
-              _context11.t0.push.call(_context11.t0, _context11.t1);
-
-            case 23:
-              _context11.next = 6;
-              break;
-
-            case 25:
-              console.log(myMaxBids);
-              resultPriceOver = [];
-              _iterator3 = myMaxBids, _isArray3 = Array.isArray(_iterator3), _i3 = 0, _iterator3 = _isArray3 ? _iterator3 : (0, _getIterator3.default)(_iterator3);
-
-            case 28:
-              if (!_isArray3) {
-                _context11.next = 34;
-                break;
-              }
-
-              if (!(_i3 >= _iterator3.length)) {
-                _context11.next = 31;
-                break;
-              }
-
-              return _context11.abrupt('break', 45);
-
-            case 31:
-              _ref14 = _iterator3[_i3++];
-              _context11.next = 38;
-              break;
-
-            case 34:
-              _i3 = _iterator3.next();
-
-              if (!_i3.done) {
-                _context11.next = 37;
-                break;
-              }
-
-              return _context11.abrupt('break', 45);
-
-            case 37:
-              _ref14 = _i3.value;
-
-            case 38:
-              m = _ref14;
-              _context11.next = 41;
-              return this.model("bid").getPriceOver(m["item"], m["value"]);
-
-            case 41:
-              r = _context11.sent;
-
-              if (!think.isEmpty(r)) resultPriceOver.push(r);
-
-            case 43:
-              _context11.next = 28;
-              break;
-
-            case 45:
-              return _context11.abrupt('return', resultPriceOver);
-
-            case 46:
+            case 3:
             case 'end':
               return _context11.stop();
           }
@@ -678,7 +522,7 @@ var User = function (_Base) {
     }));
 
     function _getPriceOver(_x2) {
-      return _ref12.apply(this, arguments);
+      return _ref11.apply(this, arguments);
     }
 
     return _getPriceOver;

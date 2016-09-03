@@ -45,7 +45,6 @@ var Order = function (_Base) {
 
   //添加新订单 地址为默认地址
   Order.prototype.addOne = function addOne(userId, itemId) {
-    console.log("order");
     return this.add({ user: userId, item: itemId, status: 0 });
   };
 
@@ -57,57 +56,70 @@ var Order = function (_Base) {
     order.status = 1;
     return this.where({ id: order.id }).update(order);
   };
-  //更改订单状态
 
-
-  Order.prototype.changeStatus = function () {
-    var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee(orderId) {
-      var status;
+  Order.prototype.finishOrder = function () {
+    var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee(order) {
+      var userModel, data;
       return _regenerator2.default.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              _context.next = 2;
-              return this.where({ id: orderId }).find();
+              userModel = think.model("user", null, "api");
+              _context.prev = 1;
+              _context.next = 4;
+              return this.startTrans();
 
-            case 2:
-              status = _context.sent["status"];
-              _context.t0 = status;
-              _context.next = _context.t0 === WAIT_CONFIRM ? 6 : _context.t0 === WAIT_PAY ? 7 : _context.t0 === WAIT_CHECK ? 8 : _context.t0 === WAIT_DELIEVER ? 9 : _context.t0 === DELIEVERED ? 10 : 11;
-              break;
+            case 4:
+              this.where({ id: order }).update({ status: this.FINISHED });
+              data = this.where({ id: order }).field("user", "price").find();
+              //更新信用值
+              // await userModel.where({id:data.user}).increment("creditLines",data.price);
 
-            case 6:
-              return _context.abrupt("return", this.where({ id: orderId }).update({ status: WAIT_PAY }));
-
-            case 7:
-              return _context.abrupt("return", this.where({ id: orderId }).update({ status: WAIT_CHECK }));
+              _context.next = 8;
+              return this.commit();
 
             case 8:
-              return _context.abrupt("return", this.where({ id: orderId }).update({ status: WAIT_DELIEVER }));
-
-            case 9:
-              return _context.abrupt("return", this.where({ id: orderId }).update({ status: DELIEVERED }));
+              _context.next = 14;
+              break;
 
             case 10:
-              return _context.abrupt("return", this.where({ id: orderId }).update({ status: FINISHED }));
+              _context.prev = 10;
+              _context.t0 = _context["catch"](1);
+              _context.next = 14;
+              return this.rollback();
 
-            case 11:
-              return _context.abrupt("return", this.where({ id: orderId }).update());
-
-            case 12:
+            case 14:
             case "end":
               return _context.stop();
           }
         }
-      }, _callee, this);
+      }, _callee, this, [[1, 10]]);
     }));
 
-    function changeStatus(_x) {
+    function finishOrder(_x) {
       return _ref.apply(this, arguments);
     }
 
-    return changeStatus;
+    return finishOrder;
   }();
+  //更改订单状态
+  // async changeStatus(orderId){
+  //   let status = (await this.where({id:orderId}).find())["status"];
+  //   switch(status){
+  //     case WAIT_CONFIRM:
+  //       return this.where({id:orderId}).update({status:WAIT_PAY});
+  //     case  WAIT_PAY:
+  //       return this.where({id:orderId}).update({status:WAIT_CHECK});
+  //     case WAIT_CHECK:
+  //       return this.where({id:orderId}).update({status:WAIT_DELIEVER});
+  //     case WAIT_DELIEVER:
+  //       return this.where({id:orderId}).update({status:DELIEVERED});
+  //     case DELIEVERED:
+  //       return this.where({id:orderId}).update({status:FINISHED});
+  //     default:
+  //       return this.where({id:orderId}).update();
+  //   }
+  // }
   //取消订单，改变订单状态为取消
 
 
@@ -116,15 +128,15 @@ var Order = function (_Base) {
   };
 
   Order.prototype.getList = function getList(userId) {
-    return this.join("item on order.item = item.id").field("order.id, item.name,item.currentPrice as price,order.createAt,order.status").where({ user: userId }).order("order.createAt DESC").select();
+    return this.join("item on order.item = item.id").field("order.id, item.name,item.currentPrice as price,order.createAt,order.status,expressName,expressNo").where({ user: userId }).order("order.createAt DESC").select();
   };
 
   Order.prototype.getConfirmedAuction = function getConfirmedAuction(userId) {
-    return this.join("item on order.item = item.id").field("item.name, order.id, item.currentPrice").where({ user: userId }).order("order.createAt DESC").select();
+    return this.join("item on order.item = item.id").field("item.name, order.id, item.currentPrice").where("user = " + userId + " and order.status = " + this.WAIT_CONFIRM).order("order.createAt DESC").select();
   };
 
   Order.prototype.getWaitPay = function getWaitPay(userId) {
-    return this.where({ user: userId }).where("order.status = 1").field("item.name, order.id, item.currentPrice").join("item on order.item = item.id").order("order.createAt DESC").select();
+    return this.where({ user: userId }).where("order.status = " + this.WAIT_PAY).field("item.name, order.id, item.currentPrice").join("item on order.item = item.id").order("order.createAt DESC").select();
   };
 
   Order.prototype.getListAdmin = function getListAdmin() {
