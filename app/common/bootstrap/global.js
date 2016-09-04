@@ -209,6 +209,10 @@ global.checkAuction = (0, _asyncToGenerator3.default)(_regenerator2.default.mark
           return itemModel.checkStatus();
 
         case 3:
+          _context3.next = 5;
+          return itemModel.initCheckStatusTimer();
+
+        case 5:
         case 'end':
           return _context3.stop();
       }

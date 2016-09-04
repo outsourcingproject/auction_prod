@@ -66,7 +66,7 @@ var _class = function (_Base) {
             case 0:
               itemModel = this.model("item");
               _context2.next = 3;
-              return this.model("item").setRelation(false).where({ status: itemModel.AUCTIONING }).join("item_type on item.type = item_type.id").field("item.id as id, currentPrice, item.name as name, followCount, auctionEndTime, image, item_type.name as type").limit(10).select();
+              return this.model("item").setRelation(false).where({ status: itemModel.AUCTIONING }).join("item_type on item.type = item_type.id").field("item.id as id, currentPrice, item.name as name, followCount, auctionEndTime, image, item_type.name as type").select();
 
             case 3:
               items = _context2.sent;
@@ -146,7 +146,7 @@ var _class = function (_Base) {
             case 0:
               itemModel = this.model("item");
               _context4.next = 3;
-              return this.model("item").setRelation(false).where({ status: itemModel.AUCTION_ENDED }).join("item_type on item.type = item_type.id").field("item.id as id, currentPrice, item.name as name, followCount, auctionEndTime, image, item_type.name as type").limit(10).select();
+              return this.model("item").setRelation(false).where({ status: itemModel.AUCTION_ENDED }).join("item_type on item.type = item_type.id").field("item.id as id, currentPrice, item.name as name, followCount, auctionEndTime, image, item_type.name as type").select();
 
             case 3:
               items = _context4.sent;
@@ -226,7 +226,7 @@ var _class = function (_Base) {
             case 0:
               itemModel = this.model("item");
               _context6.next = 3;
-              return this.model("item").setRelation(false).where({ status: itemModel.AUCTION_NOT_STARTED }).join("item_type on item.type = item_type.id").field("item.id as id, currentPrice, item.name as name, followCount, auctionEndTime, image, item_type.name as type").limit(10).select();
+              return this.model("item").setRelation(false).where({ status: itemModel.AUCTION_NOT_STARTED }).join("item_type on item.type = item_type.id").field("item.id as id, currentPrice, item.name as name, followCount, auctionEndTime, image, item_type.name as type").select();
 
             case 3:
               items = _context6.sent;
@@ -334,46 +334,99 @@ var _class = function (_Base) {
 
   _class.prototype.bidAction = function () {
     var _ref5 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee8() {
-      var user, userId, value, item, res, newPrice, newStage;
+      var now, config, user, userId, value, itemid, res, item, time, need_delay_time, auto_delay_time, newStage;
       return _regenerator2.default.wrap(function _callee8$(_context8) {
         while (1) {
           switch (_context8.prev = _context8.next) {
             case 0:
-              _context8.next = 2;
+              now = +new Date();
+              config = think.model('config', null, 'api');
+              _context8.next = 4;
               return this.session("user");
 
-            case 2:
+            case 4:
               user = _context8.sent;
 
               if (!think.isEmpty(user)) {
-                _context8.next = 5;
+                _context8.next = 7;
                 break;
               }
 
               return _context8.abrupt('return', this.fail());
 
-            case 5:
+            case 7:
               userId = user["id"];
               value = this.param("auctionPrice");
-              item = this.param("itemId");
-              _context8.next = 10;
-              return this.model("bid").addOne({ user: userId, item: item, value: value, status: this.model("bid").LEADING });
+              itemid = this.param("itemId");
+              _context8.next = 12;
+              return this.model("bid").addOne({
+                user: userId,
+                item: itemid,
+                value: value,
+                status: this.model("bid").LEADING
+              });
 
-            case 10:
+            case 12:
               res = _context8.sent;
-              _context8.next = 13;
-              return this.model("item").setRelation(false).where({ id: item }).field("currentPrice").find();
+              _context8.next = 15;
+              return this.model("item").setRelation(false).where({ id: itemid }).find();
 
-            case 13:
-              newPrice = _context8.sent;
-              _context8.next = 16;
-              return this.model("item").getStage(newPrice["currentPrice"]);
+            case 15:
+              item = _context8.sent;
 
-            case 16:
+              if (!(item.auctionType == 0)) {
+                _context8.next = 25;
+                break;
+              }
+
+              time = config.get('auction.ahead_time.time');
+
+              if (!(item.auctionEndTime < now + time)) {
+                _context8.next = 23;
+                break;
+              }
+
+              item.auctionEndTime = now + time;
+              _context8.next = 22;
+              return this.model("item").where({ id: itemid }).update({ auctionEndTime: item.auctionEndTime });
+
+            case 22:
+              this.model("item").setCheckStatusTimer(item.auctionEndTime - now);
+
+            case 23:
+              _context8.next = 33;
+              break;
+
+            case 25:
+              if (!(item.auctionType == 1)) {
+                _context8.next = 33;
+                break;
+              }
+
+              need_delay_time = config.get('auction.fix_time.need_delay_time');
+              auto_delay_time = config.get('auction.fix_time.auto_delay_time');
+
+              if (!(now + need_delay_time > item.auctionEndTime)) {
+                _context8.next = 33;
+                break;
+              }
+
+              item.auctionEndTime += auto_delay_time;
+              _context8.next = 32;
+              return this.model("item").where({ id: itemid }).update({ auctionEndTime: item.auctionEndTime });
+
+            case 32:
+              this.model("item").setCheckStatusTimer(item.auctionEndTime - now);
+
+            case 33:
+              _context8.next = 35;
+              return this.model("item").getStage(item["currentPrice"]);
+
+            case 35:
               newStage = _context8.sent;
-              return _context8.abrupt('return', this.success({ id: res, newPrice: newPrice["currentPrice"], newStage: newStage }));
+              return _context8.abrupt('return', this.success({ id: res, newPrice: item["currentPrice"], newStage: newStage }));
 
-            case 18:
+            case 37:
             case 'end':
               return _context8.stop();
           }
@@ -458,16 +511,14 @@ var _class = function (_Base) {
           switch (_context10.prev = _context10.next) {
             case 0:
               groupId = this.param("id");
-
-              console.log(groupId);
-              _context10.next = 4;
+              _context10.next = 3;
               return this.model("item_group").selectData(groupId);
 
-            case 4:
+            case 3:
               data = _context10.sent;
               return _context10.abrupt('return', this.success(data));
 
-            case 6:
+            case 5:
             case 'end':
               return _context10.stop();
           }

@@ -58,7 +58,7 @@ var Service = function (_Base) {
               });
               itemModel = think.model('item', null, 'api');
               _context.next = 5;
-              return itemModel.select();
+              return itemModel.join("item_type on item.type = item_type.id").field("item.id as id, currentPrice, item.name as name, followCount, auctionEndTime, image, item_type.name as type,item.createAt as createAt").select();
 
             case 5:
               allItems = _context.sent;

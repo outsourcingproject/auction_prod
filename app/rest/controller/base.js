@@ -161,21 +161,20 @@ var Base = function (_think$controller$res) {
             case 0:
               data = this.post();
 
-              console.log(data);
               delete data[this.modelPk];
 
               if (!think.isEmpty(data)) {
-                _context2.next = 5;
+                _context2.next = 4;
                 break;
               }
 
               return _context2.abrupt('return', this.fail("data is empty"));
 
-            case 5:
-              _context2.next = 7;
+            case 4:
+              _context2.next = 6;
               return this.session('user');
 
-            case 7:
+            case 6:
               user = _context2.sent;
 
               if (!think.isEmpty(user)) {
@@ -184,14 +183,14 @@ var Base = function (_think$controller$res) {
                 data.publisher = user.id;
               }
 
-              _context2.next = 11;
+              _context2.next = 10;
               return this.modelInstance.add(data);
 
-            case 11:
+            case 10:
               insertId = _context2.sent;
               return _context2.abrupt('return', this.success({ id: insertId }));
 
-            case 13:
+            case 12:
             case 'end':
               return _context2.stop();
           }

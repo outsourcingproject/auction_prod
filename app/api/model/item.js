@@ -129,14 +129,22 @@ var Item = function (_Base) {
               itemModel = think.model("item", null, "api");
               messageModel = think.model("message", null, "api");
               userModel = think.model("user", null, "api");
-              _context3.next = 8;
+
+
+              console.log('----------------------start----------------------');
+
+              _context3.next = 9;
               return this.where({
                 auctionEndTime: { "<": currentTime },
                 status: ["NOTIN", [this.AUCTION_FAILED, this.AUCTION_ENDED]]
               }).select();
 
-            case 8:
+            case 9:
               items_end = _context3.sent;
+
+
+              console.log('----------------------items_end----------------------');
+
               _loop = _regenerator2.default.mark(function _loop() {
                 var i, boolBid, userIds, messages;
                 return _regenerator2.default.wrap(function _loop$(_context2) {
@@ -211,12 +219,28 @@ var Item = function (_Base) {
 
                       case 27:
                         _context2.next = 29;
-                        return messageModel.sendSystemMessage([{ from: userModel.systemUser, to: i["currentBidder"], title: "系统消息", content: "您的商品" + i["name"] + bidModel.STATUS[0], read: 0 }]);
+                        return messageModel.sendSystemMessage([{
+                          from: userModel.systemUser,
+                          to: i["currentBidder"],
+                          title: "系统消息",
+                          content: "您的商品" + i["name"] + bidModel.STATUS[0],
+                          read: 0
+                        }]);
 
                       case 29:
-                        userIds = bidModel.where({ item: i["id"], status: bidModel.FAILING, user: { "!=": i["currentBidder"] } }).distinct("id").select();
+                        userIds = bidModel.where({
+                          item: i["id"],
+                          status: bidModel.FAILING,
+                          user: { "!=": i["currentBidder"] }
+                        }).distinct("id").select();
                         messages = userIds.map(function (u) {
-                          return { from: userModel.systemUser, to: u.user, title: "系统消息", content: "您的商品" + i["name"] + bidModel.STATUS[1], read: 0 };
+                          return {
+                            from: userModel.systemUser,
+                            to: u.user,
+                            title: "系统消息",
+                            content: "您的商品" + i["name"] + bidModel.STATUS[1],
+                            read: 0
+                          };
                         });
                         _context2.next = 33;
                         return messageModel.sendSystemMessage(messages);
@@ -230,79 +254,85 @@ var Item = function (_Base) {
               });
               _iterator = items_end, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : (0, _getIterator3.default)(_iterator);
 
-            case 11:
-              return _context3.delegateYield(_loop(), "t0", 12);
+            case 13:
+              return _context3.delegateYield(_loop(), "t0", 14);
 
-            case 12:
+            case 14:
               _ret2 = _context3.t0;
 
               if (!(_ret2 === "break")) {
-                _context3.next = 15;
+                _context3.next = 17;
                 break;
               }
 
-              return _context3.abrupt("break", 17);
-
-            case 15:
-              _context3.next = 11;
-              break;
+              return _context3.abrupt("break", 19);
 
             case 17:
-              _context3.next = 19;
+              _context3.next = 13;
+              break;
+
+            case 19:
+
+              console.log('----------------------for----------------------');
+
+              _context3.next = 22;
               return itemModel.where({
                 auctionBeginTime: { "<": currentTime },
                 auctionEndTime: { ">": currentTime },
                 status: ["NOTIN", [this.AUCTIONING]]
               }).select();
 
-            case 19:
+            case 22:
               items_auctioning = _context3.sent;
+
+              console.log('----------------------items_auctioning----------------------');
               _iterator2 = items_auctioning, _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : (0, _getIterator3.default)(_iterator2);
 
-            case 21:
+            case 25:
               if (!_isArray2) {
-                _context3.next = 27;
+                _context3.next = 31;
                 break;
               }
 
               if (!(_i2 >= _iterator2.length)) {
-                _context3.next = 24;
+                _context3.next = 28;
                 break;
               }
 
-              return _context3.abrupt("break", 36);
+              return _context3.abrupt("break", 40);
 
-            case 24:
+            case 28:
               _ref4 = _iterator2[_i2++];
-              _context3.next = 31;
+              _context3.next = 35;
               break;
 
-            case 27:
+            case 31:
               _i2 = _iterator2.next();
 
               if (!_i2.done) {
-                _context3.next = 30;
+                _context3.next = 34;
                 break;
               }
 
-              return _context3.abrupt("break", 36);
-
-            case 30:
-              _ref4 = _i2.value;
-
-            case 31:
-              _i3 = _ref4;
-              _context3.next = 34;
-              return itemModel.where({ id: _i3["id"] }).update({ status: this.AUCTIONING });
+              return _context3.abrupt("break", 40);
 
             case 34:
-              _context3.next = 21;
+              _ref4 = _i2.value;
+
+            case 35:
+              _i3 = _ref4;
+              _context3.next = 38;
+              return itemModel.where({ id: _i3["id"] }).update({ status: this.AUCTIONING });
+
+            case 38:
+              _context3.next = 25;
               break;
 
-            case 36:
+            case 40:
+              console.log('----------------------return----------------------');
               return _context3.abrupt("return", true);
 
-            case 37:
+            case 42:
             case "end":
               return _context3.stop();
           }
@@ -315,6 +345,57 @@ var Item = function (_Base) {
     }
 
     return checkStatus;
+  }();
+
+  Item.prototype.setCheckStatusTimer = function setCheckStatusTimer(time) {
+    var _this3 = this;
+
+    console.log('-----------------------set-----------------timer----------------------');
+    setTimeout(function () {
+      console.log('----------------------------------------timer----------------------');
+      _this3.checkStatus().then();
+    }, time);
+  };
+
+  Item.prototype.initCheckStatusTimer = function () {
+    var _ref5 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee3() {
+      var now, items, _i4;
+
+      return _regenerator2.default.wrap(function _callee3$(_context4) {
+        while (1) {
+          switch (_context4.prev = _context4.next) {
+            case 0:
+              now = +new Date();
+              _context4.next = 3;
+              return this.where({
+                status: ["NOTIN", [this.AUCTION_FAILED, this.AUCTION_ENDED]]
+              }).select();
+
+            case 3:
+              items = _context4.sent;
+
+              for (_i4 in items) {
+                if (_i4.auctionBeginTime > now) {
+                  this.setCheckStatusTimer(_i4.auctionBeginTime - now);
+                  this.setCheckStatusTimer(_i4.auctionEndTime - now);
+                } else if (_i4.auctionEndTime > now) {
+                  this.setCheckStatusTimer(_i4.auctionEndTime - now);
+                }
+              }
+
+            case 5:
+            case "end":
+              return _context4.stop();
+          }
+        }
+      }, _callee3, this);
+    }));
+
+    function initCheckStatusTimer() {
+      return _ref5.apply(this, arguments);
+    }
+
+    return initCheckStatusTimer;
   }();
 
   Item.prototype.getListAdmin = function getListAdmin() {
