@@ -88,7 +88,7 @@ var Service = function (_Base) {
               }).filter(function (i) {
                 return i.hintTimes;
               }).sort(function (x, y) {
-                return y.hintTimes - x.hintTimes || y.createAt.valueOf() - x.createAt.valueOf();
+                return y.hintTimes - x.hintTimes || +y.createAt - +x.createAt;
               });
               return _context.abrupt('return', this.success(result));
 

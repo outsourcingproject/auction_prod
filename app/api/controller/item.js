@@ -66,7 +66,7 @@ var _class = function (_Base) {
             case 0:
               itemModel = this.model("item");
               _context2.next = 3;
-              return this.model("item").setRelation(false).where({ status: itemModel.AUCTIONING }).join("item_type on item.type = item_type.id").field("item.id as id, currentPrice, item.name as name, followCount, auctionEndTime, image, item_type.name as type").select();
+              return this.model("item").setRelation(false).join("item_group on item.group = item_group.id").join("item_type on item.type = item_type.id").where({ status: itemModel.AUCTIONING }).where("item_group.isOpen = 1").field("item.id as id, currentPrice, item.name as name, followCount, auctionEndTime, item.image, item_type.name as type").select();
 
             case 3:
               items = _context2.sent;
@@ -146,7 +146,7 @@ var _class = function (_Base) {
             case 0:
               itemModel = this.model("item");
               _context4.next = 3;
-              return this.model("item").setRelation(false).where({ status: itemModel.AUCTION_ENDED }).join("item_type on item.type = item_type.id").field("item.id as id, currentPrice, item.name as name, followCount, auctionEndTime, image, item_type.name as type").select();
+              return this.model("item").setRelation(false).join("item_group on item.group = item_group.id").join("item_type on item.type = item_type.id").where({ status: [itemModel.AUCTION_ENDED, itemModel.AUCTION_FAILED] }).where("item_group.isOpen = 1").field("item.id as id, currentPrice, item.name as name, followCount, auctionEndTime, item.image, item_type.name as type").select();
 
             case 3:
               items = _context4.sent;
@@ -226,7 +226,7 @@ var _class = function (_Base) {
             case 0:
               itemModel = this.model("item");
               _context6.next = 3;
-              return this.model("item").setRelation(false).where({ status: itemModel.AUCTION_NOT_STARTED }).join("item_type on item.type = item_type.id").field("item.id as id, currentPrice, item.name as name, followCount, auctionEndTime, image, item_type.name as type").select();
+              return this.model("item").setRelation(false).join("item_group on item.group = item_group.id").join("item_type on item.type = item_type.id").where({ status: itemModel.AUCTION_NOT_STARTED }).where("item_group.isOpen = 1").field("item.id as id, currentPrice, item.name as name, followCount, auctionEndTime, item.image, item_type.name as type").select();
 
             case 3:
               items = _context6.sent;
@@ -505,7 +505,7 @@ var _class = function (_Base) {
 
   _class.prototype.groupAction = function () {
     var _ref7 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee10() {
-      var groupId, data;
+      var groupId, group, data;
       return _regenerator2.default.wrap(function _callee10$(_context10) {
         while (1) {
           switch (_context10.prev = _context10.next) {
@@ -515,10 +515,15 @@ var _class = function (_Base) {
               return this.model("item_group").selectData(groupId);
 
             case 3:
-              data = _context10.sent;
-              return _context10.abrupt('return', this.success(data));
+              group = _context10.sent;
+              _context10.next = 6;
+              return this.model("item").setRelation(false).join("item_group on item.group = item_group.id").join("item_type on item.type = item_type.id").where({ "item_group.id": groupId }).where("item_group.isOpen = 1").field("item.id as id, currentPrice, item.name as name, followCount, auctionEndTime, item.image, item_type.name as type").select();
 
-            case 5:
+            case 6:
+              data = _context10.sent;
+              return _context10.abrupt('return', this.success({ group: group, items: data }));
+
+            case 8:
             case 'end':
               return _context10.stop();
           }

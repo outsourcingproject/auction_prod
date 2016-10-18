@@ -86,8 +86,8 @@ var Authority = function (_Base) {
    */
   Authority.prototype.addAuthority = function () {
     var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee(name) {
-      var desc = arguments.length <= 1 || arguments[1] === undefined ? '' : arguments[1];
-      var allows = arguments.length <= 2 || arguments[2] === undefined ? [] : arguments[2];
+      var desc = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+      var allows = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
       var result;
       return _regenerator2.default.wrap(function _callee$(_context) {
         while (1) {

@@ -48,32 +48,34 @@ var User = function (_Base) {
 
             case 3:
               this.modelPk = _context.sent;
-              _context.next = 6;
+
+              this.needPaging = false;
+              _context.next = 7;
               return think.model('config', null, 'api').get('pageCount.user');
 
-            case 6:
+            case 7:
               _context.t0 = _context.sent;
 
               if (_context.t0) {
-                _context.next = 11;
+                _context.next = 12;
                 break;
               }
 
-              _context.next = 10;
+              _context.next = 11;
               return think.model('config', null, 'api').get('pageCount.default');
 
-            case 10:
+            case 11:
               _context.t0 = _context.sent;
 
-            case 11:
+            case 12:
               this.pageCount = _context.t0;
-              _context.next = 14;
+              _context.next = 15;
               return _Base.prototype.__before.call(this);
 
-            case 14:
+            case 15:
               return _context.abrupt('return', _context.sent);
 
-            case 15:
+            case 16:
             case 'end':
               return _context.stop();
           }

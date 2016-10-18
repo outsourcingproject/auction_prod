@@ -50,7 +50,7 @@ var ItemGroup = function (_Base) {
               this.modelPk = _context.sent;
 
               this.needPaging = false;
-              this.listOrder = { 'createAt': 'desc' };
+              this.listOrder = { 'isOpen': 'desc', 'createAt': 'desc' };
               _context.next = 8;
               return _Base.prototype.__before.call(this);
 

@@ -16,9 +16,11 @@ export default class extends Base {
     let itemModel = this.model("item");
     let items = await this.model("item")
       .setRelation(false)
-      .where({status: itemModel.AUCTIONING})
+      .join("item_group on item.group = item_group.id")
       .join("item_type on item.type = item_type.id")
-      .field("item.id as id, currentPrice, item.name as name, followCount, auctionEndTime, image, item_type.name as type")
+      .where({status: itemModel.AUCTIONING})
+      .where("item_group.isOpen = 1")
+      .field("item.id as id, currentPrice, item.name as name, followCount, auctionEndTime, item.image, item_type.name as type")
       .select();
     let user = await this.session("user");
     if (!think.isEmpty(user)) {
@@ -39,9 +41,11 @@ export default class extends Base {
     let itemModel = this.model("item");
     let items = await this.model("item")
       .setRelation(false)
-      .where({status: itemModel.AUCTION_ENDED})
+      .join("item_group on item.group = item_group.id")
       .join("item_type on item.type = item_type.id")
-      .field("item.id as id, currentPrice, item.name as name, followCount, auctionEndTime, image, item_type.name as type")
+      .where({status: [itemModel.AUCTION_ENDED, itemModel.AUCTION_FAILED]})
+      .where("item_group.isOpen = 1")
+      .field("item.id as id, currentPrice, item.name as name, followCount, auctionEndTime, item.image, item_type.name as type")
       .select();
     let user = await this.session("user");
     if (!think.isEmpty(user)) {
@@ -62,9 +66,11 @@ export default class extends Base {
     let itemModel = this.model("item");
     let items = await this.model("item")
       .setRelation(false)
-      .where({status: itemModel.AUCTION_NOT_STARTED})
+      .join("item_group on item.group = item_group.id")
       .join("item_type on item.type = item_type.id")
-      .field("item.id as id, currentPrice, item.name as name, followCount, auctionEndTime, image, item_type.name as type")
+      .where({status: itemModel.AUCTION_NOT_STARTED})
+      .where("item_group.isOpen = 1")
+      .field("item.id as id, currentPrice, item.name as name, followCount, auctionEndTime, item.image, item_type.name as type")
       .select();
     let user = await this.session("user");
     if (!think.isEmpty(user)) {
@@ -151,8 +157,16 @@ export default class extends Base {
 
   async groupAction() {
     let groupId = this.param("id");
-    let data = await this.model("item_group").selectData(groupId);
-    return this.success(data);
+    let group = await this.model("item_group").selectData(groupId);
+    let data = await this.model("item")
+      .setRelation(false)
+      .join("item_group on item.group = item_group.id")
+      .join("item_type on item.type = item_type.id")
+      .where({"item_group.id": groupId})
+      .where("item_group.isOpen = 1")
+      .field("item.id as id, currentPrice, item.name as name, followCount, auctionEndTime, item.image, item_type.name as type")
+      .select();
+    return this.success({group,items:data});
   }
 
   async detailAction() {
