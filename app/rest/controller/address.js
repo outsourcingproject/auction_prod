@@ -59,7 +59,7 @@ var Address = function (_Base) {
               user = _context.sent;
 
 
-              if (!think.isEmpty(user)) {
+              if (!this.param('filter') && !think.isEmpty(user)) {
                 this.filter = { user: user.id };
               }
               _context.next = 11;
