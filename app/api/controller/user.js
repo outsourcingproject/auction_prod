@@ -45,6 +45,7 @@ var User = function (_Base) {
 
     (_Base$prototype$init = _Base.prototype.init).call.apply(_Base$prototype$init, [this].concat(args));
     this.userModel = this.model('user');
+    this.messageModel = this.model('message');
   };
   //获取当前用户
 
@@ -71,7 +72,7 @@ var User = function (_Base) {
 
             case 5:
               _context.next = 7;
-              return this.userModel.field("desc,level,creditLines,lastLogin").where({ id: user.id }).find();
+              return this.userModel.where({ id: user.id }).find();
 
             case 7:
               userDetail = _context.sent;
@@ -112,7 +113,7 @@ var User = function (_Base) {
 
   User.prototype.signupAction = function () {
     var _ref2 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee2() {
-      var username, password, email, result;
+      var username, password, email, result, message;
       return _regenerator2.default.wrap(function _callee2$(_context2) {
         while (1) {
           switch (_context2.prev = _context2.next) {
@@ -134,15 +135,21 @@ var User = function (_Base) {
               return _context2.abrupt('return', this.fail(result));
 
             case 10:
-              _context2.t0 = this;
+              // auto login
+              message = [{ from: this.userModel.systemUser, to: result.id, title: "欢迎注册，请完善个人资料", content: "请至账户设置页，完善个人资料，我们审核通过后，会增加您的个人信用额度", read: 0 }];
               _context2.next = 13;
-              return this._login(result);
+              return this.messageModel.sendSystemMessage(message);
 
             case 13:
+              _context2.t0 = this;
+              _context2.next = 16;
+              return this._login(result);
+
+            case 16:
               _context2.t1 = _context2.sent;
               return _context2.abrupt('return', _context2.t0.success.call(_context2.t0, _context2.t1));
 
-            case 15:
+            case 18:
             case 'end':
               return _context2.stop();
           }

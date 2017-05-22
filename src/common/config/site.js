@@ -69,7 +69,7 @@ export default {
   user: {
     default: {
       role: 2,
-      creditLines: 1000,
+      creditLines: 0,
       avatar: '/assets/img/avatar.png',
       desc: '他很懒，什么都没留下',
       level: 1,
@@ -79,11 +79,11 @@ export default {
   auction: {
     //拍卖品在各价格时,报价最小增加幅度
     bid_increasment: [
-      [0, 50],
-      [1000, 100],
-      [5000, 200],
-      [10000, 500],
-      [20000, 1000]
+      [0, 10],
+      [1000, 20],
+      [5000, 50],
+      [10000, 200],
+      [20000, 500]
     ],
     ahead_time: {
       //领先时间(单位:秒)
