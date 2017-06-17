@@ -368,38 +368,49 @@ var _class = function (_Base) {
 
             case 12:
               res = _context8.sent;
-              _context8.next = 15;
+
+              console.log("~~~~~~~~~~~~bidAction~~~~~~~~~~~~~~");
+              console.log(user);
+              _context8.next = 17;
+              return this.model("item").where({ id: itemid }).update({
+                currentBidder: userId
+              });
+
+            case 17:
+              _context8.next = 19;
               return this.model("item").setRelation(false).where({ id: itemid }).find();
 
-            case 15:
+            case 19:
               item = _context8.sent;
 
               if (!(item.auctionType == 0)) {
-                _context8.next = 25;
+                _context8.next = 29;
                 break;
               }
 
               time = config.get('auction.ahead_time.time');
 
               if (!(item.auctionEndTime < now + time)) {
-                _context8.next = 23;
+                _context8.next = 27;
                 break;
               }
 
               item.auctionEndTime = now + time;
-              _context8.next = 22;
-              return this.model("item").where({ id: itemid }).update({ auctionEndTime: item.auctionEndTime });
+              _context8.next = 26;
+              return this.model("item").where({ id: itemid }).update({
+                auctionEndTime: item.auctionEndTime
+              });
 
-            case 22:
+            case 26:
               this.model("item").setCheckStatusTimer(item.auctionEndTime - now);
 
-            case 23:
-              _context8.next = 33;
+            case 27:
+              _context8.next = 37;
               break;
 
-            case 25:
+            case 29:
               if (!(item.auctionType == 1)) {
-                _context8.next = 33;
+                _context8.next = 37;
                 break;
               }
 
@@ -407,26 +418,28 @@ var _class = function (_Base) {
               auto_delay_time = config.get('auction.fix_time.auto_delay_time');
 
               if (!(now + need_delay_time > item.auctionEndTime)) {
-                _context8.next = 33;
+                _context8.next = 37;
                 break;
               }
 
               item.auctionEndTime += auto_delay_time;
-              _context8.next = 32;
-              return this.model("item").where({ id: itemid }).update({ auctionEndTime: item.auctionEndTime });
+              _context8.next = 36;
+              return this.model("item").where({ id: itemid }).update({
+                auctionEndTime: item.auctionEndTime
+              });
 
-            case 32:
+            case 36:
               this.model("item").setCheckStatusTimer(item.auctionEndTime - now);
 
-            case 33:
-              _context8.next = 35;
+            case 37:
+              _context8.next = 39;
               return this.model("item").getStage(item["currentPrice"]);
 
-            case 35:
+            case 39:
               newStage = _context8.sent;
               return _context8.abrupt('return', this.success({ id: res, newPrice: item["currentPrice"], newStage: newStage }));
 
-            case 37:
+            case 41:
             case 'end':
               return _context8.stop();
           }
