@@ -91,9 +91,9 @@ var Role = function (_Base) {
    */
   Role.prototype.addRole = function () {
     var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee(name) {
-      var desc = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
-      var extend = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : ['anonymous', 'registered'];
-      var authorities = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : [];
+      var desc = arguments.length <= 1 || arguments[1] === undefined ? '' : arguments[1];
+      var extend = arguments.length <= 2 || arguments[2] === undefined ? ['anonymous', 'registered'] : arguments[2];
+      var authorities = arguments.length <= 3 || arguments[3] === undefined ? [] : arguments[3];
       var roleAuthorityModel, result;
       return _regenerator2.default.wrap(function _callee$(_context) {
         while (1) {

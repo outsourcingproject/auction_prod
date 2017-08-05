@@ -58,7 +58,7 @@ var User = function (_Base) {
    */
   User.prototype.createUser = function () {
     var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee(username, password, email) {
-      var role = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 2;
+      var role = arguments.length <= 3 || arguments[3] === undefined ? 2 : arguments[3];
       var creditLines, desc, level, lastLogin, result;
       return _regenerator2.default.wrap(function _callee$(_context) {
         while (1) {
@@ -109,7 +109,7 @@ var User = function (_Base) {
 
             case 20:
               _context.next = 22;
-              return this.add({ username: username, password: password, email: email, role: role, creditLines: creditLines, desc: desc, level: level, lastLogin: lastLogin });
+              return this.add({ username: username, password: password, email: email, role: role, creditLines: creditLines, remainCreditLines: creditLines, desc: desc, level: level, lastLogin: lastLogin });
 
             case 22:
               result = _context.sent;

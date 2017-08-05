@@ -368,49 +368,57 @@ var _class = function (_Base) {
 
             case 12:
               res = _context8.sent;
-
-              console.log("~~~~~~~~~~~~bidAction~~~~~~~~~~~~~~");
-              console.log(user);
-              _context8.next = 17;
+              _context8.next = 15;
               return this.model("item").where({ id: itemid }).update({
                 currentBidder: userId
               });
 
+            case 15:
+              _context8.next = 17;
+              return this.model("user").where({ id: userId }).find();
+
             case 17:
-              _context8.next = 19;
+              user = _context8.sent;
+              _context8.next = 20;
+              return this.model("user").where({ id: userId }).update({
+                remainCreditLines: user.remainCreditLines - value
+              });
+
+            case 20:
+              _context8.next = 22;
               return this.model("item").setRelation(false).where({ id: itemid }).find();
 
-            case 19:
+            case 22:
               item = _context8.sent;
 
               if (!(item.auctionType == 0)) {
-                _context8.next = 29;
+                _context8.next = 32;
                 break;
               }
 
               time = config.get('auction.ahead_time.time');
 
               if (!(item.auctionEndTime < now + time)) {
-                _context8.next = 27;
+                _context8.next = 30;
                 break;
               }
 
               item.auctionEndTime = now + time;
-              _context8.next = 26;
+              _context8.next = 29;
               return this.model("item").where({ id: itemid }).update({
                 auctionEndTime: item.auctionEndTime
               });
 
-            case 26:
+            case 29:
               this.model("item").setCheckStatusTimer(item.auctionEndTime - now);
 
-            case 27:
-              _context8.next = 37;
+            case 30:
+              _context8.next = 40;
               break;
 
-            case 29:
+            case 32:
               if (!(item.auctionType == 1)) {
-                _context8.next = 37;
+                _context8.next = 40;
                 break;
               }
 
@@ -418,28 +426,28 @@ var _class = function (_Base) {
               auto_delay_time = config.get('auction.fix_time.auto_delay_time');
 
               if (!(now + need_delay_time > item.auctionEndTime)) {
-                _context8.next = 37;
+                _context8.next = 40;
                 break;
               }
 
               item.auctionEndTime += auto_delay_time;
-              _context8.next = 36;
+              _context8.next = 39;
               return this.model("item").where({ id: itemid }).update({
                 auctionEndTime: item.auctionEndTime
               });
 
-            case 36:
+            case 39:
               this.model("item").setCheckStatusTimer(item.auctionEndTime - now);
 
-            case 37:
-              _context8.next = 39;
+            case 40:
+              _context8.next = 42;
               return this.model("item").getStage(item["currentPrice"]);
 
-            case 39:
+            case 42:
               newStage = _context8.sent;
               return _context8.abrupt('return', this.success({ id: res, newPrice: item["currentPrice"], newStage: newStage }));
 
-            case 41:
+            case 44:
             case 'end':
               return _context8.stop();
           }

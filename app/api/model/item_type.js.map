@@ -1,1 +1,1 @@
-{"version":3,"sources":["../../../src/api/model/item_type.js"],"names":[],"mappings":"AAAA;;;;;;;;;;;;;;;;AACA;;;;;;AAEA","file":"item_type.js","sourcesContent":["'use strict';\r\nimport Base from './base.js'\r\n\r\n/**\r\n * model\r\n */\r\nexport default class extends Base {\r\n\r\n}"]}
+{"version":3,"sources":["../../../src/api/model/item_type.js"],"names":[],"mappings":"AAAA;;;;;;;;;;;;;;;;AACA;;;;;;AAEA","file":"item_type.js","sourcesContent":["'use strict';\nimport Base from './base.js'\n\n/**\n * model\n */\nexport default class extends Base {\n\n}"]}
