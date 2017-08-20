@@ -112,7 +112,7 @@ var Bid = function (_Base) {
                       case 7:
                         item = _context.sent;
                         _context.next = 10;
-                        return messageModel.sendSystemMessage([{ from: userModel.systemUser, to: bid.user, title: "系统消息", content: "您的商品" + item.name + _this2.STATUS[bid.status], read: 0 }]);
+                        return messageModel.sendSystemMessage([{ from: userModel.systemUser, to: bid.user, title: "系统消息：您的出价领先", content: "您的商品" + item.name + _this2.STATUS[bid.status], read: 0 }]);
 
                       case 10:
                         _context.next = 12;
@@ -128,7 +128,7 @@ var Bid = function (_Base) {
                       case 16:
                         //给被超越竞标记录的用户发送消息
                         messages = bids.map(function (b) {
-                          return { from: userModel.systemUser, to: b.user, title: "系统消息", content: "您的商品" + item.name + _this2.STATUS[3], read: 0 };
+                          return { from: userModel.systemUser, to: b.user, title: "系统消息：您的出价被超越", content: "您的商品" + item.name + _this2.STATUS[3], read: 0 };
                         });
 
                         if (think.isEmpty(messages)) {
