@@ -14,8 +14,8 @@ export default class extends Base {
     if(sendToAll){
       uids = (await userModel.field('id').select()).map(i=>i.id)
     }else{
-      t = to.split(',')
-      for(let i of t){
+      to = to.split(',')
+      for(let i of to){
         let u = await userModel.where({username:i}).field('id').find()
         uids.push(u.id)
       }
